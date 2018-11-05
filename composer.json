@@ -1,0 +1,15 @@
+{
+    "name": "anwerj/stubborn",
+    "description": "Create stubs from json schema to Model",
+    "type": "project",
+    "require": {
+        "illuminate/console": "^5.5",
+        "justinrainbow/json-schema": "^5.2",
+        "jenssegers/blade": "^1.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Stubborn\\": "src/"
+        }
+    }
+}

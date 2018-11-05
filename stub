@@ -1,0 +1,16 @@
+#!/usr/bin/env php
+<?php
+
+require __DIR__ . '/./vendor/autoload.php';
+
+$config = require_once('config.php');
+
+$generator = new Stubborn\Generator($config);
+
+$generator->loadSchema($argv[1] ?? 'schemas/laravel/product.json');
+
+$generator->loadStubs($argv[2] ?? 'laravel');
+
+$generator->loadFilesytem(__DIR__ . '/storage/tmp/');
+
+$generator->generate();
