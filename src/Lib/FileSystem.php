@@ -41,6 +41,10 @@ class File extends Filesystem
         {
             echo system("cat $path | pbcopy");
         }
+        else if ($this->config->printOutput === 'html')
+        {
+            echo $content;
+        }
 
     }
 

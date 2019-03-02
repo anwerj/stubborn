@@ -31,6 +31,11 @@ class Stub
         $this->base         = $base;
     }
 
+    public function root()
+    {
+        return $this->schema->root;
+    }
+
     /**
      * @return array
      */

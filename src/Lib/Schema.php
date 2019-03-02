@@ -3,6 +3,7 @@
 namespace Stubborn\Lib;
 
 use Stubborn\Lib\Json\Property;
+use JsonSchema\SchemaStorage;
 
 class Schema
 {
@@ -17,8 +18,14 @@ class Schema
     {
         $this->path = $path;
 
-        $load = json_decode(file_get_contents($path), true);
+        $storage = new SchemaStorage;
 
-        $this->root = new Property('root', $load, null);
+        $schema = (object) ['$ref' => 'file://' . $path];
+
+//        $storage->addSchema(SchemaStorage::INTERNAL_PROVIDED_SCHEMA_URI, $schema);
+//
+//        $load = $storage->getSchema(SchemaStorage::INTERNAL_PROVIDED_SCHEMA_URI);
+
+        $this->root = new Property($storage, 'root', $schema, null);
     }
 }

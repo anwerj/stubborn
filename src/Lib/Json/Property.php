@@ -2,17 +2,21 @@
 
 namespace Stubborn\Lib\Json;
 
+use stdClass;
 use Stubborn\Lib\Ext\Str;
+use JsonSchema\SchemaStorage;
 
 class Property
 {
     public $type;
     public $title;
+    public $description;
     public $default;
-    public $examples;
     public $pattern;
-    public $required;
     public $maxLength;
+    public $examples;
+    public $required;
+    public $properties;
 
     protected $_name                = 'root';
     protected $_data                = [];
@@ -21,21 +25,25 @@ class Property
     protected $_propertyMaxLength   = 0;
     protected $_isRequired          = false;
 
-    public function __construct(string $name, array $data, Property $parent = null)
+    public function __construct(SchemaStorage $storage, string $name, stdClass $schema, Property $parent = null)
     {
+        $data = $storage->resolveRefSchema($schema);
+
         $this->_name        = $name;
         $this->_data        = $data;
 
-        $this->type         = $data['type'] ?? 'string';
-        $this->title        = $data['title'] ?? null;
-        $this->default      = $data['default'] ?? null;
-        $this->examples     = $data['examples'] ?? [];
-        $this->pattern      = $data['pattern'] ?? null;
-        $this->required     = $data['required'] ?? [];
-        $this->maxLength    = $data['maxLength'] ?? null;
+        $this->type         = $data->type           ?? 'string';
+        $this->title        = $data->title          ?? null;
+        $this->description  = $data->description    ?? null;
+        $this->default      = $data->default        ?? null;
+        $this->pattern      = $data->pattern        ?? null;
+        $this->maxLength    = $data->maxLength      ?? null;
+        $this->examples     = $data->examples       ?? (new stdClass);
+        $this->required     = $data->required       ?? (new stdClass);
+        $this->properties   = $data->properties     ?? (new stdClass);
 
         $this->handleParent($parent);
-        $this->handleProperties($data['properties'] ?? []);
+        $this->handleProperties($storage);
     }
 
     public function name(): string
@@ -102,11 +110,11 @@ class Property
         $this->_isRequired = in_array($this->name(), $this->_parent->required);
     }
 
-    protected function handleProperties(array $properties)
+    protected function handleProperties(SchemaStorage $storage)
     {
-        foreach ($properties as $name => $property)
+        foreach ($this->properties as $name => $property)
         {
-            $this->_properties[$name] = new Property($name, $property, $this);
+            $this->_properties[$name] = new Property($storage, $name, $property, $this);
 
             if(strlen($name) > $this->_propertyMaxLength)
             {

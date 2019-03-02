@@ -26,7 +26,6 @@ trait Laravel54
     {
         $output = [];
 
-        $output[] = $property->isRequired() ? 'required' : 'sometimes';
         $output[] = $this->laravelValidatorPropertyType($property);
         if ($property->pattern)
         {
@@ -127,6 +126,10 @@ trait Laravel54
         {
             case null:
                 return 'null';
+            case true:
+                return 'true';
+            case false:
+                return 'false';
             default:
                 return $property->default;
         }
